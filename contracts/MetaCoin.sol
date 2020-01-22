@@ -55,17 +55,33 @@ contract MetaCoin is RelayRecipient {
      * In production contracts, this call is done from the constructor, or restricted to ownerOnly.
      */
     function init_hub(IRelayHub hub_addr) public {
-        initRelayHub(hub_addr);
+        setRelayHub(hub_addr);
     }
 
-    function acceptRelayedCall(address /*relay*/, address /*from*/,
-        bytes memory/*encoded_function*/, uint /*gas_price*/, uint /*transaction_fee*/, bytes memory /* approval */ ) public view returns(uint) {
-        return 0; //accept everything.
+    function acceptRelayedCall(
+        address relay,
+        address from,
+        bytes calldata encodedFunction,
+        uint256 transactionFee,
+        uint256 gasPrice,
+        uint256 gasLimit,
+        uint256 nonce,
+        bytes calldata approvalData,
+        uint256 maxPossibleCharge
+    )
+    external
+    view
+    returns (uint256, bytes memory) {
+        return (0, '');
+        //accept everything.
     }
 
     //nothing to be done post-call. still, we must implement this method.
-    function postRelayedCall(address /*relay*/ , address /*from*/,
-        bytes memory/*encoded_function*/, bool /*success*/, uint /*used_gas*/, uint /*transaction_fee*/ ) public {
+    function preRelayedCall(bytes calldata context) external returns (bytes32){
+		return '';
+    }
+
+    function postRelayedCall(bytes calldata context, bool success, uint actualCharge, bytes32 preRetVal) external {
     }
 
 }

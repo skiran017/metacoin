@@ -45,6 +45,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "tabookey-gasless": "file:tabookey-gasless-0.4.0.tgz"
+    "@openeth/gsn": "0.4.5",
+    "tabookey-gasless": "0.4.0"
   }
 }
