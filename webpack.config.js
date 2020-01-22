@@ -17,7 +17,7 @@ module.exports = {
   devtool: 'source-map',
   module: {
     rules: [
-      { test: /\.s?css$/, use: [ 'style-loader', 'css-loader', 'sass-loader' ] },
+      { test: /\.s?css$/, use: ['style-loader', 'css-loader', 'sass-loader'] },
       {
         test: /\.js$/,
         exclude: /(node_modules|bower_components)/,
@@ -30,4 +30,3 @@ module.exports = {
     ]
   }
 }
-

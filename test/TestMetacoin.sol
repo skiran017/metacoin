@@ -2,7 +2,6 @@ pragma solidity ^0.5.10;
 
 import "truffle/Assert.sol";
 import "truffle/DeployedAddresses.sol";
-import "tabookey-gasless/contracts/RelayHub.sol"; // import needed for artifact generation
 import "../contracts/MetaCoin.sol";
 
 contract TestMetacoin {

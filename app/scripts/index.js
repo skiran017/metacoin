@@ -2,8 +2,8 @@
 import '../styles/app.css'
 
 // Import libraries we need.
-import { default as Web3 } from 'web3'
-import { default as contract } from 'truffle-contract'
+import Web3 from 'web3'
+import contract from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
@@ -21,8 +21,8 @@ const MetaCoin = contract(metaCoinArtifact)
 let accounts
 let account
 
-let network = {
-  baseurl:'https://ropsten.etherscan.io/'
+const network = {
+  baseurl: 'https://ropsten.etherscan.io/'
 }
 
 const App = {
@@ -46,7 +46,7 @@ const App = {
       }
 
       if (accs.length === 0) {
-        alert("Couldn't get any accounts! Make sure your Ethereum client is configured correctly.")
+        alert('Couldn\'t get any accounts! Make sure your Ethereum client is configured correctly.')
         return
       }
 
@@ -90,12 +90,12 @@ const App = {
     })
   },
 
-  mint : function () {
+  mint: function () {
     const self = this
 
     MetaCoin.deployed().then(function (instance) {
       self.setStatus('Mint: Initiating transaction... (please wait)')
-      return instance.mint({ from:account})
+      return instance.mint({ from: account })
     }).then(function (res) {
       self.refreshBalance()
       self.setStatus('Mint transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
