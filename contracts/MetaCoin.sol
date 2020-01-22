@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
 import "./ConvertLib.sol";
-import "tabookey-gasless/contracts/RelayRecipient.sol";
-import "tabookey-gasless/contracts/RelayHub.sol"; // import needed for artifact generation
+import "@openeth/gsn/contracts/RelayRecipient.sol";
+import "@openeth/gsn/contracts/RelayHub.sol"; // import needed for artifact generation
 
 
 // This is just a simple example of a coin-like contract.

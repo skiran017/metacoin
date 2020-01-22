@@ -4,21 +4,18 @@ const MetaCoin = artifacts.require('./MetaCoin.sol')
 const networks = {
   ropsten: {
     relayHubAddr: '0x1349584869A1C7b8dc8AE0e93D8c15F5BB3B4B87'
+  },
+  development: {
+    relayHubAddr: '0xd216153c06e857cd7f72665e0af1d7d82172f494'
   }
 }
 
 const RelayHub = artifacts.require('./RelayHub.sol')
 
 module.exports = async function (deployer, network) {
-  let hub
-  if (network === 'ropsten') {
-    const hubAddr = networks[network].relayHubAddr
-    console.log('hub=', hubAddr)
-    hub = await RelayHub.at(hubAddr)
-  } else {
-    await deployer.deploy(RelayHub)
-    hub = await RelayHub.at(RelayHub.address)
-  }
+  const hubAddr = networks[network].relayHubAddr
+  console.log('hub=', hubAddr)
+  const hub = await RelayHub.at(hubAddr)
   await deployer.deploy(ConvertLib)
   await deployer.link(ConvertLib, MetaCoin)
 

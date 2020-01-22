@@ -1,3 +1,4 @@
+/* global ethereum */
 // Import the page's CSS. Webpack will know what to do with it.
 import '../styles/app.css'
 
@@ -8,9 +9,9 @@ import contract from 'truffle-contract'
 // Import our contract artifacts and turn them into usable abstractions.
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
 
-const tabookey = require('tabookey-gasless')
+const Gsn = require('@openeth/gsn')
 
-const RelayProvider = tabookey.RelayProvider
+const RelayProvider = Gsn.RelayProvider
 
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 const MetaCoin = contract(metaCoinArtifact)
@@ -26,11 +27,10 @@ const network = {
 }
 
 const App = {
-  start: function () {
+  start: async function () {
     const self = this
 
     var provider = new RelayProvider(web3.currentProvider, {
-      txfee: 12,
       force_gasLimit: 5000000
     })
     web3.setProvider(provider)
@@ -128,19 +128,28 @@ const App = {
 }
 
 window.App = App
-
-window.addEventListener('load', function () {
-  // Checking if Web3 has been injected by the browser (Mist/MetaMask)
-  if (typeof web3 !== 'undefined') {
+window.addEventListener('load', async () => {
+  // Modern dapp browsers...
+  if (window.ethereum) {
     console.warn(
       'Using web3 detected from external source.' +
       ' If you find that your accounts don\'t appear or you have 0 MetaCoin,' +
       ' ensure you\'ve configured that source properly.' +
+      ' (and allowed the app to access MetaMask.)' +
       ' If using MetaMask, see the following link.' +
       ' Feel free to delete this warning. :)' +
       ' http://truffleframework.com/tutorials/truffle-and-metamask'
     )
-    // Use Mist/MetaMask's provider
+    window.web3 = new Web3(ethereum)
+    try {
+      // Request account access if needed
+      await ethereum.enable()
+    } catch (error) {
+      // User denied account access...
+      alert('NO NO NO')
+    }
+  } else if (window.web3) {
+    // Legacy dapp browsers...
     window.web3 = new Web3(web3.currentProvider)
   } else {
     console.warn(
@@ -152,6 +161,5 @@ window.addEventListener('load', function () {
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
     window.web3 = new Web3(new Web3.providers.HttpProvider('http://127.0.0.1:9545'))
   }
-
-  App.start()
+  await App.start()
 })
