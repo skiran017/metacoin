@@ -116,7 +116,7 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      return meta.sendCoin(receiver, amount, { from: account })
+      return meta.sendCoin(receiver, amount, { from: account, methodSuffix: '_v4', jsonStringifyRequest: true })
     }).then(function (res) {
       self.setStatus('Transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
       self.refreshBalance()

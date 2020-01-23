@@ -6,7 +6,7 @@ const networks = {
     relayHubAddr: '0x1349584869A1C7b8dc8AE0e93D8c15F5BB3B4B87'
   },
   development: {
-    relayHubAddr: '0xd216153c06e857cd7f72665e0af1d7d82172f494'
+    relayHubAddr: '0xCfEB869F69431e42cdB54A4F4f105C19C080A601'
   }
 }
 
@@ -28,7 +28,9 @@ module.exports = async function deployFunc(deployer, network) {
 
   await deployer.deploy(MetaCoin)
   try {
-    await hub.depositFor(MetaCoin.address, { value: 1e17 })
+    for (let i = 0; i < 100; i++) {
+      await hub.depositFor(MetaCoin.address, { value: 1e17 })
+    }
     console.log('== Initializing Metacoin\'s Hub')
     const metacoin = await MetaCoin.at(MetaCoin.address)
     await metacoin.init_hub(hub.address)
