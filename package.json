@@ -50,7 +50,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "@openeth/gsn": "0.4.5",
+    "@openeth/gsn": "file:openeth-gsn-0.4.5.tgz",
     "truffle-hdwallet-provider": "^1.0.17"
   }
 }

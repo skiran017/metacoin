@@ -95,7 +95,7 @@ const App = {
 
     MetaCoin.deployed().then(function (instance) {
       self.setStatus('Mint: Initiating transaction... (please wait)')
-      return instance.mint({ from: account })
+      return instance.mint({ from: account, methodSuffix: '_v4', jsonStringifyRequest: true  })
     }).then(function (res) {
       self.refreshBalance()
       self.setStatus('Mint transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
