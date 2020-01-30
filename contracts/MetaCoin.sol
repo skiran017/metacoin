@@ -19,7 +19,7 @@ contract MetaCoin is RelayRecipient {
 		balances[tx.origin] = 10000;
 	}
 
-	function sendCoin(address receiver, uint amount) public returns(bool sufficient) {
+	function transfer(address receiver, uint amount) public returns(bool sufficient) {
 		if (balances[getSender()] < amount) return false;
 		balances[getSender()] -= amount;
 		balances[receiver] += amount;

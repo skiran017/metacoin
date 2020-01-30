@@ -265,10 +265,9 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@openeth/gsn@^0.4.5":
+"@openeth/gsn@file:openeth-gsn-0.4.5.tgz":
   version "0.4.5"
-  resolved "https://registry.yarnpkg.com/@openeth/gsn/-/gsn-0.4.5.tgz#90c035badbdf6bc884407f0c090e0b7ac45ec61e"
-  integrity sha512-c34bbAoLK706A5XIDxcylsu+txbUWgSdbswAjVlUdrHHCWg/UBpJI9h/ZzgIoDIaWPfnIVskOnfCU3322FiL0A==
+  resolved "file:openeth-gsn-0.4.5.tgz#dd3d82814b923306baeb915d61cbbdd22f5d6aa7"
   dependencies:
     "@0x/contracts-utils" "3.1.1"
     abi-decoder "^2.2.0"

@@ -52,7 +52,7 @@ contract('MetaCoin', function (accounts) {
       return meta.getBalance.call(accountTwo)
     }).then(function (balance) {
       accountTwoStartingBalance = balance.toNumber()
-      return meta.sendCoin(accountTwo, amount, { from: accountOne })
+      return meta.transfer(accountTwo, amount, { from: accountOne })
     }).then(function () {
       return meta.getBalance.call(accountOne)
     }).then(function (balance) {

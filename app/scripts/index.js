@@ -105,7 +105,7 @@ const App = {
     })
   },
 
-  sendCoin: function () {
+  transfer: function () {
     const self = this
 
     const amount = parseInt(document.getElementById('amount').value)
@@ -116,7 +116,7 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      return meta.sendCoin(receiver, amount, { from: account, methodSuffix: '_v4', jsonStringifyRequest: true })
+      return meta.transfer(receiver, amount, { from: account, methodSuffix: '_v4', jsonStringifyRequest: true })
     }).then(function (res) {
       self.setStatus('Transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
       self.refreshBalance()
