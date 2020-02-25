@@ -22,6 +22,20 @@ module.exports = {
       },
       network_id: 4
     },
+    kotti: {
+      provider: function () {
+        const wallet = new HDWalletProvider(mnemonic, 'https://www.ethercluster.com/kotti')
+        return wallet
+      },
+      network_id: 6
+    },
+    ethereum_classic_mainnet: {
+      provider: function () {
+        const wallet = new HDWalletProvider(mnemonic, 'https://www.ethercluster.com/etc')
+        return wallet
+      },
+      network_id: 1
+    }
   },
   compilers: {
     solc: {
