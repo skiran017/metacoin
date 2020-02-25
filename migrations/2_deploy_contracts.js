@@ -28,9 +28,9 @@ module.exports = async function deployFunc(deployer, network) {
 
   await deployer.deploy(MetaCoin)
   try {
-    for (let i = 0; i < 100; i++) {
-      await hub.depositFor(MetaCoin.address, { value: 1e17 })
-    }
+//    for (let i = 0; i < 100; i++) {
+      await hub.depositFor(MetaCoin.address, { value: 1e18 })
+//    }
     console.log('== Initializing Metacoin\'s Hub')
     const metacoin = await MetaCoin.at(MetaCoin.address)
     await metacoin.init_hub(hub.address)

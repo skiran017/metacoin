@@ -23,7 +23,7 @@ let accounts
 let account
 
 const network = {
-  baseurl: 'https://ropsten.etherscan.io/'
+  baseurl: 'https://rinkeby.etherscan.io/'
 }
 
 const App = {
@@ -85,7 +85,11 @@ const App = {
       const hubaddrElement = document.getElementById('hubaddr')
       hubaddrElement.innerHTML = self.link('address/' + hubaddr, hubaddr)
     }).catch(function (e) {
+      const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
+      if ( /mismatch/.test(e)) {
+        fatalmessage.innerHTML = "Wrong network. please switch to 'rinkeby'"
+      }
       self.setStatus('Error getting balance; see log.')
     })
   },
