@@ -1,8 +1,9 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.16;
 
 import "./ConvertLib.sol";
-import "@openeth/gsn/contracts/RelayRecipient.sol";
-import "@openeth/gsn/contracts/RelayHub.sol"; // import needed for artifact generation
+import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
+import "@opengsn/gsn/contracts/TrustedForwarder.sol";
+import "@opengsn/gsn/contracts/RelayHub.sol"; // import needed for artifact generation
 
 
 // This is just a simple example of a coin-like contract.
@@ -10,13 +11,14 @@ import "@openeth/gsn/contracts/RelayHub.sol"; // import needed for artifact gene
 // coin/token contracts. If you want to create a standards-compliant
 // token, see: https://github.com/ConsenSys/Tokens. Cheers!
 
-contract MetaCoin is RelayRecipient {
+contract MetaCoin is BaseRelayRecipient {
 	mapping (address => uint) balances;
 
 	event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
 	constructor() public {
 		balances[tx.origin] = 10000;
+		trustedForwarder = address(new TrustedForwarder());
 	}
 
 	function transfer(address receiver, uint amount) public returns(bool sufficient) {
@@ -48,41 +50,4 @@ contract MetaCoin is RelayRecipient {
         minted[getSender()] = true;
         balances[getSender()] += 10000;
     }
-    
-    /**
-     * initialize RelayHub for our contract.
-     * This call is required so the contract will recognize relayed calls from direct calls.
-     * Without knowing the relay, getSender() cannot return the address of the real sender.
-     * In production contracts, this call is done from the constructor, or restricted to ownerOnly.
-     */
-    function init_hub(IRelayHub hub_addr) public {
-        setRelayHub(hub_addr);
-    }
-
-    function acceptRelayedCall(
-        address relay,
-        address from,
-        bytes calldata encodedFunction,
-        uint256 transactionFee,
-        uint256 gasPrice,
-        uint256 gasLimit,
-        uint256 nonce,
-        bytes calldata approvalData,
-        uint256 maxPossibleCharge
-    )
-    external
-    view
-    returns (uint256, bytes memory) {
-        return (0, '');
-        //accept everything.
-    }
-
-    //nothing to be done post-call. still, we must implement this method.
-    function preRelayedCall(bytes calldata context) external returns (bytes32){
-		return '';
-    }
-
-    function postRelayedCall(bytes calldata context, bool success, uint actualCharge, bytes32 preRetVal) external {
-    }
-
 }
