@@ -15,7 +15,7 @@ import paymasterArtifact from '../../build/gsn/Paymaster.json'
 const Gsn = require('@opengsn/gsn/dist/src/relayclient/')
 const configureGSN = require('@opengsn/gsn/dist/src/relayclient/GSNConfigurator').configureGSN
 
-const RelayProvider = Gsn.default
+const RelayProvider = Gsn.RelayProvider
 
 // MetaCoin is our usable abstraction, which we'll use through the code below.
 const MetaCoin = contract(metaCoinArtifact)
