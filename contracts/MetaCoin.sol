@@ -22,10 +22,10 @@ contract MetaCoin is BaseRelayRecipient {
 	}
 
 	function transfer(address receiver, uint amount) public returns(bool sufficient) {
-		if (balances[getSender()] < amount) return false;
-		balances[getSender()] -= amount;
+		if (balances[_msgSender()] < amount) return false;
+		balances[_msgSender()] -= amount;
 		balances[receiver] += amount;
-		emit Transfer(getSender(), receiver, amount);
+		emit Transfer(_msgSender(), receiver, amount);
 		return true;
 	}
 
@@ -46,8 +46,8 @@ contract MetaCoin is BaseRelayRecipient {
      * but for our sample, any user can mint some coins - but just once..
      */
     function mint() public {
-        require(!minted[getSender()]);
-        minted[getSender()] = true;
-        balances[getSender()] += 10000;
+        require(!minted[_msgSender()]);
+        minted[_msgSender()] = true;
+        balances[_msgSender()] += 10000;
     }
 }
