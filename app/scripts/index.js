@@ -28,7 +28,7 @@ let account
 let forwarder
 
 const network = {
-  baseurl: 'https://rinkeby.etherscan.io/'
+  baseurl: 'https://kovan.etherscan.io/'
 }
 
 const App = {
@@ -109,7 +109,7 @@ const App = {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
       if ( /mismatch/.test(e)) {
-        fatalmessage.innerHTML = "Wrong network. please switch to 'rinkeby'"
+        fatalmessage.innerHTML = "Wrong network. please switch to 'kovan'"
       }
       self.setStatus('Error getting balance; see log.')
     })
