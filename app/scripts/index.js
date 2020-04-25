@@ -45,7 +45,9 @@ const App = {
         stakeManagerAddress: stakeManagerArtifact.address,
         methodSuffix: '_v4',
         jsonStringifyRequest: true,
-        chainId: chainId
+        chainId: chainId,
+        paymasterAddress: paymasterArtifact.address,
+        gasPriceFactorPercent: 70
       })
       var provider = new RelayProvider(web3.currentProvider, gsnConfig)
       web3.setProvider(provider)
@@ -115,10 +117,10 @@ const App = {
 
   mint : function () {
     const self = this
-
     MetaCoin.deployed().then(function (instance) {
+      console.log('Metacoin deployed', instance)
       self.setStatus('Mint: Initiating transaction... (please wait)')
-      return instance.mint({ from: account, forwarder: forwarder, paymaster: paymasterArtifact.address })
+      return instance.mint({ from: account })
     }).then(function (res) {
       self.refreshBalance()
       self.setStatus('Mint transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
@@ -140,7 +142,7 @@ const App = {
     MetaCoin.deployed().then(function (instance) {
       meta = instance
       return meta.transfer(receiver, amount,
-        { from: account, forwarder: forwarder, paymaster: paymasterArtifact.address })
+        { from: account })
     }).then(function (res) {
       self.setStatus('Transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
       self.refreshBalance()
