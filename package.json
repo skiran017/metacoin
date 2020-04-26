@@ -1,18 +1,18 @@
 {
-  "name": "truffle-init-webpack",
-  "version": "0.0.2",
-  "description": "Frontend example using truffle v3",
+  "description": "GSN Sample MetaCoin",
+  "name": "gsn-metacoin",
+  "version": "0.0.3",
   "scripts": {
     "test": "truffle test",
     "migrate": "truffle migrate",
     "lint": "eslint ./",
     "old-prepare": "truffle compile && npm test && npm run lint && webpack-cli --config ./webpack.config.js",
     "pack": "webpack-cli --mode production --config ./webpack.config.js",
-    "build": "truffle compile && yarn run pack",
+    "build": "truffle compile && yarn update-deployed && yarn run pack",
+    "update-deployed": "./scripts/update-deployed.js --deployed deployed.json",
     "dev": "webpack-dev-server",
     "ganache": "ganache-cli -d -k 'istanbul' -l 1e8"
   },
-  "author": "Douglas von Kohorn",
   "license": "MIT",
   "devDependencies": {
     "babel-cli": "^6.26.0",
