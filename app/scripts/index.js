@@ -8,7 +8,6 @@ import contract from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
-
 import { networks } from './networks'
 
 const Gsn = require('@opengsn/gsn/dist/src/relayclient/')
@@ -32,27 +31,35 @@ const App = {
   start: async function () {
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
-    web3.eth.net.getId(function (err, chainId) {
-
-      network = networks[chainId]
-      console.log( 'chainid=', chainId, network)
+    web3.eth.net.getId(function (err, networkId) {
+      if (parseInt(networkId) < 1e4 ) { // We're on testnet/
+        network = networks[networkId]
+        MetaCoin.deployed = () => MetaCoin.at(network.metacoin)
+      } else { // We're on ganache
+        console.log('Using local ganache')
+        network = {
+          relayHub: require('../../build/gsn/RelayHub.json').address,
+          stakeManager: require('../../build/gsn/StakeManager.json').address,
+          paymaster: require('../../build/gsn/Paymaster.json').address
+        }
+      }
       if (!network) {
         const fatalmessage = document.getElementById('fatalmessage')
         fatalmessage.innerHTML = "Wrong network. please switch to 'kovan' or 'ropsten'"
         return
       }
-      MetaCoin.deployed = () => MetaCoin.at(network.metacoin)
+      console.log( 'chainid=', networkId, network)
 
       if (err) {
         console.log('Error getting chainId', err)
         process.exit(-1)
       }
       const gsnConfig = configureGSN({
-        relayHubAddress: network.relayhub,
+        relayHubAddress: network.relayHub,
         stakeManagerAddress: network.stakeManager,
         methodSuffix: '_v4',
         jsonStringifyRequest: true,
-        chainId: chainId,
+        chainId: networkId,
         paymasterAddress: network.paymaster,
         gasPriceFactorPercent: 70,
         relayLookupWindowBlocks: 1e5
@@ -110,7 +117,7 @@ const App = {
       return meta.getTrustedForwarder.call({ from: account })
     }).then(function (forwarderAddress) {
       const hubaddrElement = document.getElementById('hubaddr')
-      hubaddrElement.innerHTML = self.link('address/' + network.relayhub, network.relayhub)
+      hubaddrElement.innerHTML = self.link('address/' + network.relayHub, network.relayHub)
       const forwarderElement = document.getElementById('forwarderAddress')
       forwarderElement.innerHTML = self.link('address/' + forwarderAddress, forwarderAddress)
     }).catch(function (e) {
