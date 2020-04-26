@@ -54,7 +54,8 @@ const App = {
         jsonStringifyRequest: true,
         chainId: chainId,
         paymasterAddress: network.paymaster,
-        gasPriceFactorPercent: 70
+        gasPriceFactorPercent: 70,
+        relayLookupWindowBlocks: 1e5
       })
       var provider = new RelayProvider(web3.currentProvider, gsnConfig)
       web3.setProvider(provider)
@@ -97,6 +98,7 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
+      console.log('Metacoin deployed', instance)
       const address = document.getElementById('address')
       address.innerHTML = self.link('address/' + account, account)
 
@@ -147,6 +149,7 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
+      console.log('Metacoin deployed', instance)
       return meta.transfer(receiver, amount,
         { from: account })
     }).then(function (res) {
