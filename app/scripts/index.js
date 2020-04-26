@@ -117,7 +117,7 @@ const App = {
       const address = document.getElementById('address')
       address.innerHTML = self.addressLink(account)
 
-      return meta.getBalance.call(account, { from: account })
+      return meta.balanceOf.call(account, { from: account })
     }).then(function (value) {
       const balanceElement = document.getElementById('balance')
       balanceElement.innerHTML = value.valueOf()
@@ -126,8 +126,8 @@ const App = {
     }).then(function (forwarderAddress) {
       const hubaddrElement = document.getElementById('hubaddr')
       hubaddrElement.innerHTML = self.addressLink(network.relayHub)
-      const forwarderElement = document.getElementById('forwarderAddress')
-      forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
+      const metaaddr = document.getElementById('metaaddr')
+      metaaddr.innerHTML = self.addressLink(MetaCoin.address, MetaCoin.address)
     }).catch(function (e) {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)

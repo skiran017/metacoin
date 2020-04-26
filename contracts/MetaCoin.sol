@@ -2,9 +2,6 @@ pragma solidity ^0.5.16;
 
 import "./ConvertLib.sol";
 import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
-import "@opengsn/gsn/contracts/TrustedForwarder.sol";
-import "@opengsn/gsn/contracts/RelayHub.sol"; // import needed for artifact generation
-
 
 // This is just a simple example of a coin-like contract.
 // It is not standards compatible and cannot be expected to talk to other
@@ -12,33 +9,38 @@ import "@opengsn/gsn/contracts/RelayHub.sol"; // import needed for artifact gene
 // token, see: https://github.com/ConsenSys/Tokens. Cheers!
 
 contract MetaCoin is BaseRelayRecipient {
-	mapping (address => uint) balances;
 
-	event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    string public symbol = "META";
+    string public description = "GSN Sample MetaCoin";
+    uint public decimals = 0;
 
-	constructor() public {
-		balances[tx.origin] = 10000;
-		trustedForwarder = address(new TrustedForwarder());
-	}
+    mapping(address => uint) balances;
 
-	function transfer(address receiver, uint amount) public returns(bool sufficient) {
-		if (balances[_msgSender()] < amount) return false;
-		balances[_msgSender()] -= amount;
-		balances[receiver] += amount;
-		emit Transfer(_msgSender(), receiver, amount);
-		return true;
-	}
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-	function getBalanceInEth(address addr) public view returns(uint){
-		return ConvertLib.convert(getBalance(addr),2);
-	}
+    constructor(address forwarder) public {
+        balances[tx.origin] = 10000;
+        trustedForwarder = forwarder;
+    }
 
-	function getBalance(address addr) public view returns(uint) {
-		return balances[addr];
-	}
+    function transfer(address receiver, uint amount) public returns (bool sufficient) {
+        if (balances[_msgSender()] < amount) return false;
+        balances[_msgSender()] -= amount;
+        balances[receiver] += amount;
+        emit Transfer(_msgSender(), receiver, amount);
+        return true;
+    }
+
+    function getBalanceInEth(address addr) public view returns (uint){
+        return ConvertLib.convert(balanceOf(addr), 2);
+    }
+
+    function balanceOf(address addr) public view returns (uint) {
+        return balances[addr];
+    }
 
 
-	mapping (address=>bool) minted;
+    mapping(address => bool) minted;
 
     /**
      * mint some coins for this caller.
@@ -46,7 +48,7 @@ contract MetaCoin is BaseRelayRecipient {
      * but for our sample, any user can mint some coins - but just once..
      */
     function mint() public {
-        require(!minted[_msgSender()]);
+        require(!minted[_msgSender()], "already minted");
         minted[_msgSender()] = true;
         balances[_msgSender()] += 10000;
     }
