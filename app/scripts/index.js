@@ -8,9 +8,8 @@ import contract from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
-import relayHubArtifact from '../../build/gsn/RelayHub.json'
-import stakeManagerArtifact from '../../build/gsn/StakeManager.json'
-import paymasterArtifact from '../../build/gsn/Paymaster.json'
+
+import { networks } from './networks'
 
 const Gsn = require('@opengsn/gsn/dist/src/relayclient/')
 const configureGSN = require('@opengsn/gsn/dist/src/relayclient/GSNConfigurator').configureGSN
@@ -27,26 +26,34 @@ let accounts
 let account
 let forwarder
 
-const network = {
-  baseurl: 'https://kovan.etherscan.io/'
-}
+var network
 
 const App = {
   start: async function () {
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
     web3.eth.net.getId(function (err, chainId) {
+
+      network = networks[chainId]
+      console.log( 'chainid=', chainId, network)
+      if (!network) {
+        const fatalmessage = document.getElementById('fatalmessage')
+        fatalmessage.innerHTML = "Wrong network. please switch to 'kovan' or 'ropsten'"
+        return
+      }
+      MetaCoin.deployed = () => MetaCoin.at(network.metacoin)
+
       if (err) {
         console.log('Error getting chainId', err)
         process.exit(-1)
       }
       const gsnConfig = configureGSN({
-        relayHubAddress: relayHubArtifact.address,
-        stakeManagerAddress: stakeManagerArtifact.address,
+        relayHubAddress: network.relayhub,
+        stakeManagerAddress: network.stakeManager,
         methodSuffix: '_v4',
         jsonStringifyRequest: true,
         chainId: chainId,
-        paymasterAddress: paymasterArtifact.address,
+        paymasterAddress: network.paymaster,
         gasPriceFactorPercent: 70
       })
       var provider = new RelayProvider(web3.currentProvider, gsnConfig)
@@ -100,9 +107,8 @@ const App = {
 
       return meta.getTrustedForwarder.call({ from: account })
     }).then(function (forwarderAddress) {
-      forwarder = forwarderAddress
       const hubaddrElement = document.getElementById('hubaddr')
-      hubaddrElement.innerHTML = self.link('address/' + relayHubArtifact.address, relayHubArtifact.address)
+      hubaddrElement.innerHTML = self.link('address/' + network.relayhub, network.relayhub)
       const forwarderElement = document.getElementById('forwarderAddress')
       forwarderElement.innerHTML = self.link('address/' + forwarderAddress, forwarderAddress)
     }).catch(function (e) {

@@ -40,8 +40,8 @@
     "json-loader": "^0.5.7",
     "node-sass": "^4.9.0",
     "sass-loader": "^7.0.3",
-    "source-map-support": "^0.5.3",
     "solc": "0.5.16",
+    "source-map-support": "^0.5.3",
     "style-loader": "^0.21.0",
     "truffle": "5.1.22",
     "truffle-contract": "^4.0.31",
@@ -52,7 +52,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "@opengsn/gsn": "0.8.2",
+    "@opengsn/gsn": "0.8.3",
     "truffle-hdwallet-provider": "^1.0.17"
   }
 }
