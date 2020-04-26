@@ -8,7 +8,7 @@
     "lint": "eslint ./",
     "old-prepare": "truffle compile && npm test && npm run lint && webpack-cli --config ./webpack.config.js",
     "pack": "webpack-cli --config ./webpack.config.js",
-    "build": "npm install",
+    "build": "truffle compile && yarn run pack",
     "dev": "webpack-dev-server",
     "ganache": "ganache-cli -d -k 'istanbul' -l 1e8"
   },
