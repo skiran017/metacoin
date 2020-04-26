@@ -6,7 +6,6 @@ module.exports = {
   node: {
     fs: 'empty'
   },
-  mode: 'production',
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'app.js'
