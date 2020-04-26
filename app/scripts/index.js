@@ -99,6 +99,14 @@ const App = {
     return '<a href="' + network.baseurl + path + '">' + text + '</a>'
   },
 
+  addressLink: function (addr) {
+    return '<a href="' + network.addressUrl + addr + '" target="_info">' + addr + '</a>'
+  },
+
+  txLink: function (addr) {
+    return '<a href="' + network.txUrl + addr + '" target="_info">' + addr + '</a>'
+  },
+
   refreshBalance: function () {
     const self = this
 
@@ -107,7 +115,7 @@ const App = {
       meta = instance
       console.log('Metacoin deployed', instance)
       const address = document.getElementById('address')
-      address.innerHTML = self.link('address/' + account, account)
+      address.innerHTML = self.addressLink(account)
 
       return meta.getBalance.call(account, { from: account })
     }).then(function (value) {
@@ -117,9 +125,9 @@ const App = {
       return meta.getTrustedForwarder.call({ from: account })
     }).then(function (forwarderAddress) {
       const hubaddrElement = document.getElementById('hubaddr')
-      hubaddrElement.innerHTML = self.link('address/' + network.relayHub, network.relayHub)
+      hubaddrElement.innerHTML = self.addressLink(network.relayHub)
       const forwarderElement = document.getElementById('forwarderAddress')
-      forwarderElement.innerHTML = self.link('address/' + forwarderAddress, forwarderAddress)
+      forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
     }).catch(function (e) {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
@@ -138,7 +146,7 @@ const App = {
       return instance.mint({ from: account })
     }).then(function (res) {
       self.refreshBalance()
-      self.setStatus('Mint transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
+      self.setStatus('Mint transaction complete!<br>\n' + self.txLink(res.tx))
     }).catch(function (err) {
       console.log('mint error:', err)
       self.setStatus('Error getting balance; see log.')
@@ -160,7 +168,7 @@ const App = {
       return meta.transfer(receiver, amount,
         { from: account })
     }).then(function (res) {
-      self.setStatus('Transaction complete!<br>\n' + self.link('tx/' + res.tx, res.tx))
+      self.setStatus('Transaction complete!<br>\n' + self.txLink(res.tx))
       self.refreshBalance()
     }).catch(function (e) {
       console.log(e)
