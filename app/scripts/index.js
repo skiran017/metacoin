@@ -128,6 +128,9 @@ const App = {
       hubaddrElement.innerHTML = self.addressLink(network.relayHub)
       const metaaddr = document.getElementById('metaaddr')
       metaaddr.innerHTML = self.addressLink(MetaCoin.address, MetaCoin.address)
+      const forwarderElement = document.getElementById('forwarderAddress')
+      forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
+
     }).catch(function (e) {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
