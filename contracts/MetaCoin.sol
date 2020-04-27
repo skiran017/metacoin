@@ -1,42 +1,46 @@
-pragma solidity ^0.5.0;
+pragma solidity ^0.5.16;
 
 import "./ConvertLib.sol";
-import "@openeth/gsn/contracts/RelayRecipient.sol";
-import "@openeth/gsn/contracts/RelayHub.sol"; // import needed for artifact generation
-
+import "@opengsn/gsn/contracts/BaseRelayRecipient.sol";
 
 // This is just a simple example of a coin-like contract.
 // It is not standards compatible and cannot be expected to talk to other
 // coin/token contracts. If you want to create a standards-compliant
 // token, see: https://github.com/ConsenSys/Tokens. Cheers!
 
-contract MetaCoin is RelayRecipient {
-	mapping (address => uint) balances;
+contract MetaCoin is BaseRelayRecipient {
 
-	event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    string public symbol = "META";
+    string public description = "GSN Sample MetaCoin";
+    uint public decimals = 0;
 
-	constructor() public {
-		balances[tx.origin] = 10000;
-	}
+    mapping(address => uint) balances;
 
-	function transfer(address receiver, uint amount) public returns(bool sufficient) {
-		if (balances[getSender()] < amount) return false;
-		balances[getSender()] -= amount;
-		balances[receiver] += amount;
-		emit Transfer(getSender(), receiver, amount);
-		return true;
-	}
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
-	function getBalanceInEth(address addr) public view returns(uint){
-		return ConvertLib.convert(getBalance(addr),2);
-	}
+    constructor(address forwarder) public {
+        balances[tx.origin] = 10000;
+        trustedForwarder = forwarder;
+    }
 
-	function getBalance(address addr) public view returns(uint) {
-		return balances[addr];
-	}
+    function transfer(address receiver, uint amount) public returns (bool sufficient) {
+        if (balances[_msgSender()] < amount) return false;
+        balances[_msgSender()] -= amount;
+        balances[receiver] += amount;
+        emit Transfer(_msgSender(), receiver, amount);
+        return true;
+    }
+
+    function getBalanceInEth(address addr) public view returns (uint){
+        return ConvertLib.convert(balanceOf(addr), 2);
+    }
+
+    function balanceOf(address addr) public view returns (uint) {
+        return balances[addr];
+    }
 
 
-	mapping (address=>bool) minted;
+    mapping(address => bool) minted;
 
     /**
      * mint some coins for this caller.
@@ -44,45 +48,8 @@ contract MetaCoin is RelayRecipient {
      * but for our sample, any user can mint some coins - but just once..
      */
     function mint() public {
-        require(!minted[getSender()]);
-        minted[getSender()] = true;
-        balances[getSender()] += 10000;
+        require(!minted[_msgSender()], "already minted");
+        minted[_msgSender()] = true;
+        balances[_msgSender()] += 10000;
     }
-    
-    /**
-     * initialize RelayHub for our contract.
-     * This call is required so the contract will recognize relayed calls from direct calls.
-     * Without knowing the relay, getSender() cannot return the address of the real sender.
-     * In production contracts, this call is done from the constructor, or restricted to ownerOnly.
-     */
-    function init_hub(IRelayHub hub_addr) public {
-        setRelayHub(hub_addr);
-    }
-
-    function acceptRelayedCall(
-        address relay,
-        address from,
-        bytes calldata encodedFunction,
-        uint256 transactionFee,
-        uint256 gasPrice,
-        uint256 gasLimit,
-        uint256 nonce,
-        bytes calldata approvalData,
-        uint256 maxPossibleCharge
-    )
-    external
-    view
-    returns (uint256, bytes memory) {
-        return (0, '');
-        //accept everything.
-    }
-
-    //nothing to be done post-call. still, we must implement this method.
-    function preRelayedCall(bytes calldata context) external returns (bytes32){
-		return '';
-    }
-
-    function postRelayedCall(bytes calldata context, bool success, uint actualCharge, bytes32 preRetVal) external {
-    }
-
 }

@@ -3,7 +3,9 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   entry: './app/scripts/index.js',
-  mode: 'production',
+  node: {
+    fs: 'empty'
+  },
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'app.js'
@@ -28,5 +30,19 @@ module.exports = {
         }
       }
     ]
-  }
+  },
+  externals: [
+    (function () {
+      var IGNORES = [
+        'electron'
+        // 'fs'
+      ]
+      return function (context, request, callback) {
+        if (IGNORES.indexOf(request) >= 0) {
+          return callback(null, "require('" + request + "')")
+        }
+        return callback()
+      }
+    })()
+  ]
 }
