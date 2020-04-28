@@ -11,7 +11,8 @@
     "build": "truffle compile && yarn update-deployed && yarn run pack",
     "update-deployed": "./scripts/update-deployed.js --deployed deployed.json",
     "dev": "webpack-dev-server",
-    "ganache": "ganache-cli -d -k 'istanbul' -l 1e8"
+    "ganache": "ganache-cli -k 'istanbul' -l 1e8",
+    "dev-with-gsn": "npx gsn deploy-relay-hub && npx gsn fund-paymaster && (npx gsn run-relayer --Workdir /tmp/server --DevMode --RelayHubAddress `grep -o -E \"0x[a-fA-F0-9]+\" build/gsn/RelayHub.json` & ) | grep -m 1 \"intialized\" && npx gsn register-relayer && npx truffle migrate && npm run dev"
   },
   "license": "MIT",
   "devDependencies": {
