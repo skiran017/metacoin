@@ -8,6 +8,7 @@ import contract from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
+import IPaymaster from '../../build/contracts/IPaymaster.json'
 import { networks } from './networks'
 
 const Gsn = require('@opengsn/gsn/dist/src/relayclient/')
@@ -110,12 +111,30 @@ const App = {
   refreshBalance: function () {
     const self = this
 
+    function putItem(name,val) {
+      const item = document.getElementById(name)
+      item.innerHTML = val
+    }
+    function putAddr(name,addr) {
+      putItem(name, self.addressLink(addr))
+    }
+
+    putAddr( 'paymaster', network.paymaster )
+    putAddr( 'hubaddr', network.relayHub )
+
+    new web3.eth.Contract( IPaymaster.abi, network.paymaster ).methods
+      .getRelayHubDeposit().call().then(bal=> {
+      putItem( 'paymasterBal', "- eth balance: "+(bal/1e18) )
+    }).catch(console.log)
+
+
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
       console.log('Metacoin deployed', instance)
       const address = document.getElementById('address')
       address.innerHTML = self.addressLink(account)
+      putAddr( 'metaaddr', MetaCoin.address)
 
       return meta.balanceOf.call(account, { from: account })
     }).then(function (value) {
@@ -124,10 +143,7 @@ const App = {
 
       return meta.getTrustedForwarder.call({ from: account })
     }).then(function (forwarderAddress) {
-      const hubaddrElement = document.getElementById('hubaddr')
-      hubaddrElement.innerHTML = self.addressLink(network.relayHub)
-      const metaaddr = document.getElementById('metaaddr')
-      metaaddr.innerHTML = self.addressLink(MetaCoin.address, MetaCoin.address)
+
       const forwarderElement = document.getElementById('forwarderAddress')
       forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
 
