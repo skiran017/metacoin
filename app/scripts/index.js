@@ -184,10 +184,10 @@ const App = {
         if ( !this.instance ) {
           this.instance = await MetaCoin.deployed()
         }
-        const pm = await HashcashPaymaster.deployed()
+        const pm = network.paymaster
         const from = (await web3.eth.getAccounts())[0]
         console.log( 'meta=', this.instance.address)
-        hashCashApproval = await calculateHashcashApproval(web3, from, this.instance.address, pm.address, 2000, (difficulty,nonce)=>{
+        hashCashApproval = await calculateHashcashApproval(web3, from, this.instance.address, pm, 2000, (difficulty,nonce)=>{
           return new Promise(resolve=>{
             but.innerText = `(checked so far ${nonce} from ${2<<difficulty}`
             // if you need UI update during the process, use setImmediate to resolve:

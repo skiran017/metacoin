@@ -8,7 +8,7 @@
     "lint": "eslint ./",
     "old-prepare": "truffle compile && npm test && npm run lint && webpack-cli --config ./webpack.config.js",
     "pack": "webpack-cli --mode production --config ./webpack.config.js",
-    "build": "truffle compile && find node_modules/@opengsn/paymasters && yarn update-deployed && yarn run pack",
+    "build": "truffle compile && yarn update-deployed && yarn run pack",
     "update-deployed": "./scripts/update-deployed.js --deployed deployed.json",
     "dev": "webpack-dev-server",
     "ganache": "ganache-cli -k 'istanbul' -l 1e8",
