@@ -1,5 +1,6 @@
 const MetaCoin = artifacts.require('MetaCoin.sol')
 const TrustedForwarder = artifacts.require('TrustedForwarder.sol')
+const HashcashPaymaster = artifacts.require('HashcashPaymaster.sol')
 
 module.exports = async function deployFunc (deployer, network) {
   const netid = await web3.eth.net.getId()
@@ -23,5 +24,12 @@ module.exports = async function deployFunc (deployer, network) {
   }
   console.log('using forwarder: ', forwarder)
   await deployer.deploy(MetaCoin, forwarder)
+
+  from = (await web3.eth.getAccounts())[0]
+  await deployer.deploy(HashcashPaymaster, 15)
+  const pm = await HashcashPaymaster.deployed()
+  pm.setRelayHub(require('../build/gsn/RelayHub').address, {from})
+  await web3.eth.sendTransaction({from,to:HashcashPaymaster.address, value:5e17})
+
   console.log('Finished 2/3 migrations files')
 }

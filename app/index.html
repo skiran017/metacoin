@@ -19,6 +19,8 @@
   <br>Your address:<br><b><span id="address">here</span></b><p>
   <br><label for="amount">Amount:</label><br><input type="text" id="amount" placeholder="e.g., 95" width="50%"></input>
   <p><label for="receiver">To Address:</label><br><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae" width="90%"></input>
+  <p>Before performing an operation, you must update the hashcash (takes few seconds)
+  <br><button id="hashcash" onclick="App.updateHashcash(this)">Update hashcash...</button>
   <br><br><button id="send" onclick="App.transfer()">Send MetaCoin</button>
   <p>Just for test purposes, you can mint coins for your address...
   <br><button id="send" onclick="App.mint()">Mint some coins...</button>

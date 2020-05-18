@@ -8,8 +8,11 @@ import contract from 'truffle-contract'
 
 // Import our contract artifacts and turn them into usable abstractions.
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
-import IPaymaster from '../../build/contracts/IPaymaster.json'
+import IPaymaster from '../../build/contracts/IPaymaster'
 import { networks } from './networks'
+import { calculateHashcashApproval } from '@opengsn/paymasters/src/HashCashApproval'
+import hashashPaymasterActifact from '../../build/contracts/HashcashPaymaster'
+const HashcashPaymaster = contract(hashashPaymasterActifact)
 
 const Gsn = require('@opengsn/gsn/dist/src/relayclient/')
 const configureGSN = require('@opengsn/gsn/dist/src/relayclient/GSNConfigurator').configureGSN
@@ -25,14 +28,22 @@ const MetaCoin = contract(metaCoinArtifact)
 let accounts
 let account
 let forwarder
+let paymaster
+
+let hashCashApproval
 
 var network
 
 const App = {
   start: async function () {
+    //hashhash needs a provider, but we only do "read", so it doesn't care
+    // if its default or GSN provider
+    HashcashPaymaster.setProvider(web3.currentProvider)
+
+
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
-    web3.eth.net.getId(function (err, networkId) {
+    web3.eth.net.getId(async function (err, networkId) {
       if (parseInt(networkId) < 1e4 ) { // We're on testnet/
         network = networks[networkId]
         MetaCoin.deployed = () => MetaCoin.at(network.metacoin)
@@ -41,7 +52,7 @@ const App = {
         network = {
           relayHub: require('../../build/gsn/RelayHub.json').address,
           stakeManager: require('../../build/gsn/StakeManager.json').address,
-          paymaster: require('../../build/gsn/Paymaster.json').address
+          paymaster: (await HashcashPaymaster.deployed()).address
         }
       }
       if (!network) {
@@ -65,7 +76,15 @@ const App = {
         gasPriceFactorPercent: 70,
         relayLookupWindowBlocks: 1e5
       })
-      var provider = new RelayProvider(web3.currentProvider, gsnConfig)
+
+      var provider = new RelayProvider(web3.currentProvider, gsnConfig, {
+        asyncApprovalData: async (req) => {
+            //return last calculated
+            console.log( 'approvaldata: ', hashCashApproval)
+            return hashCashApproval || '0x'
+        }
+      })
+
       web3.setProvider(provider)
 
       // Bootstrap the MetaCoin abstraction for Use.
@@ -131,7 +150,7 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      console.log('Metacoin deployed', instance)
+      // console.log('Metacoin deployed', instance)
       const address = document.getElementById('address')
       address.innerHTML = self.addressLink(account)
       putAddr( 'metaaddr', MetaCoin.address)
@@ -155,6 +174,30 @@ const App = {
       }
       self.setStatus('Error getting balance; see log.')
     })
+  },
+
+  updateHashcash: async function(but) {
+    const title = but.innerText.replace( /\s*:.*/, '')
+    try {
+      console.log( 'updateHashcash')
+        but.innerText = "Calculating new hashcash..."
+        if ( !this.instance ) {
+          this.instance = await MetaCoin.deployed()
+        }
+        const pm = await HashcashPaymaster.deployed()
+        const from = (await web3.eth.getAccounts())[0]
+        console.log( 'meta=', this.instance.address)
+        hashCashApproval = await calculateHashcashApproval(web3, from, this.instance.address, pm.address, 2000, (difficulty,nonce)=>{
+          return new Promise(resolve=>{
+            but.innerText = `(checked so far ${nonce} from ${2<<difficulty}`
+            // if you need UI update during the process, use setImmediate to resolve:
+            setImmediate(()=>resolve(true))
+          })
+        })
+        but.innerText = title+': ok'
+    } catch(e)  {
+        but.innerText = title+': '+e
+    }
   },
 
   mint : function () {
@@ -183,7 +226,7 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      console.log('Metacoin deployed', instance)
+      //console.log('Metacoin deployed', instance)
       return meta.transfer(receiver, amount,
         { from: account })
     }).then(function (res) {
