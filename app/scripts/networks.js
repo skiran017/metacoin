@@ -1,8 +1,8 @@
 module.exports = {
   networks: {
     42: {
-      addressUrl: 'https://dashboard.tenderly.dev/contract/kovan/',
-      txUrl: 'https://dashboard.tenderly.dev/tx/kovan/',
+      addressUrl: 'https://dashboard.tenderly.co/contract/kovan/',
+      txUrl: 'https://dashboard.tenderly.co/tx/kovan/',
       // addressUrl: 'https://kovan.etherscan.io/address/',
       // txUrl: 'https://kovan.etherscan.io/tx/',
       metacoin: '0x9Cf40EF3D1622efe270fE6fe720585B4BE4eeEff',
@@ -11,8 +11,8 @@ module.exports = {
       paymaster: '0x957F270d45e9Ceca5c5af2b49f1b5dC1Abb0421c',
     },
     3: {
-      addressUrl: 'https://dashboard.tenderly.dev/contract/ropsten/',
-      txUrl: 'https://dashboard.tenderly.dev/tx/ropsten/',
+      addressUrl: 'https://dashboard.tenderly.co/contract/ropsten/',
+      txUrl: 'https://dashboard.tenderly.co/tx/ropsten/',
       // addressUrl: 'https://ropsten.etherscan.io/address/',
       // txUrl: 'https://ropsten.etherscan.io/tx/',
       metacoin: '0xec9eE395E82A6CB7b8D9cF7D0D2c07bB9e0C5Cd1',
