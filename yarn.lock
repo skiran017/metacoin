@@ -103,10 +103,10 @@
     lodash "^4.2.0"
     to-fast-properties "^2.0.0"
 
-"@opengsn/captcha-paymaster@^0.0.7":
-  version "0.0.7"
-  resolved "https://registry.yarnpkg.com/@opengsn/captcha-paymaster/-/captcha-paymaster-0.0.7.tgz#6d58911629de8096e982c8afc81de91eae0a5dd4"
-  integrity sha512-paRj8+uNQeV/+PQcwJaxJlwj62lHtlPtBkRdAbJJInEFhkunE3Xe9LT+pjjgMVNOp6sHCsto1GKY/Fk5du3WkQ==
+"@opengsn/captcha-paymaster@^0.0.8":
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/@opengsn/captcha-paymaster/-/captcha-paymaster-0.0.8.tgz#f598e1f6a203c0d7e5d4c816f58b24e5036f028d"
+  integrity sha512-QJLcqO3Vmt9e7d4Y0JkF9iT0XRX87zEYTqZ+fvKi9xN2ujz/wIU+6VtDo8e9FXq5v2YKyIcK+VJnuUOEFywS7w==
   dependencies:
     axios "^0.19.2"
 
