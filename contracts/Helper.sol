@@ -4,7 +4,7 @@ pragma solidity >=0.5.0;
 // (without "polluting" the MetaCoin itself)
 import "@opengsn/gsn/contracts/RelayHub.sol"; // import needed for artifact generation
 import "@opengsn/gsn/contracts/TrustedForwarder.sol"; // import needed for artifact generation
-import "@opengsn/paymasters/contracts/HashcashPaymaster.sol"; // import needed for artifact generation
+import "@opengsn/captcha-paymaster/contracts/CaptchaPaymaster.sol"; // import needed for artifact generation
 
 contract Helper {
 }
