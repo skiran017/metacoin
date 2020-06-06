@@ -8,7 +8,7 @@ module.exports = {
       metacoin: '0x9Cf40EF3D1622efe270fE6fe720585B4BE4eeEff',
       relayHub: '0x2E0d94754b348D208D64d52d78BcD443aFA9fa52',
       stakeManager: '0x0ecf783407C5C80D71CFEa37938C0b60BD255FF8',
-      paymaster: '0x3B96020DFbef03bF618f7eb1ba7d268eac8471Ce', //after unittests
+      paymaster: '0xfF8CFc954d4AE3e94680d48D34Ed9e650ebd3EC2', // with correct url,etc
     },
     3: {
       addressUrl: 'https://dashboard.tenderly.dev/contract/ropsten/',

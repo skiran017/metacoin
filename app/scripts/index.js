@@ -1,4 +1,4 @@
-/* global ethereum */
+/* global ethereum grecaptcha */
 // Import the page's CSS. Webpack will know what to do with it.
 import '../styles/app.css'
 
@@ -37,11 +37,10 @@ var network
 const App = {
   start: async function () {
 
-
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
     web3.eth.net.getId(function (err, networkId) {
-      if (parseInt(networkId) < 1e4 ) { // We're on testnet/
+      if (parseInt(networkId) < 1e4) { // We're on testnet/
         console.log( 'using network ', networkId)
         network = networks[networkId]
         MetaCoin.networks[networkId] = { address: network.metacoin }
@@ -74,7 +73,7 @@ const App = {
         process.exit(-1)
       }
       gsnConfig = configureGSN({
-        verbose:true,
+        // verbose:true,
         relayHubAddress: network.relayHub,
         stakeManagerAddress: network.stakeManager,
         methodSuffix: '_v4',
@@ -84,41 +83,41 @@ const App = {
         relayLookupWindowBlocks: 1e5
       })
 
-      //REAL required approval data calculation. will throw exception
-      // locally, before trying to relay
-      let asyncApprovalData = createCaptchaAsyncApprovalCallback(web3,()=> grecaptcha.getResponse())
+      // This is the only require asyncApprovalData.
+      // the code below is for disabling local tests, so we can see real on-chain validation
+      let asyncApprovalData = createCaptchaAsyncApprovalCallback(web3, () => grecaptcha.getResponse())
 
-      //FOR TESTING: wrap it, so we can test "old" captcha checking:
-      let allowOldCaptcha_asyncApprovalData = createCaptchaAsyncApprovalCallback(web3,async ()=>{
-            let ret
-            try {
-              ret = await grecaptcha.getResponse()
-            } catch(e) {
-              console.log( 'grecaptcha ex=', e.toString(), ' usign lastValid:', lastValidApproval)
-              return lastValidApproval || '0x'
-            }
-            console.log( 'current captcha resp=', ret, 'last=', lastValidApproval)
-            //for testing: if no captcha data, use old (stale) result
-            if ( ret ) lastValidApproval = ret
-              else
-                ret = lastValidApproval || '0x'
+      // FOR TESTING: wrap it, so we can test "old" captcha checking:
+      const allowOldCaptcha_asyncApprovalData = createCaptchaAsyncApprovalCallback(web3, async () => {
+        let ret
+        try {
+          ret = await grecaptcha.getResponse()
+        } catch (e) {
+          console.log('grecaptcha ex=', e.toString(), 'using lastValid:', lastValidApproval)
+          return lastValidApproval || '0x'
+        }
+        // for testing: if no captcha data, use old (stale) result
+        if (ret) {
+          lastValidApproval = ret
+        } else {
+          console.log( 'no valid approval. re-using old approval (which should fail...)')
+          ret = lastValidApproval || '0x'
+        }
 
-              //if you further want to verify the signature check, modify one of the last 65 bytes.
-            return ret;
-          })
+        // if you further want to verify the signature check, modify one of the last 65 bytes.
+        return ret || '0x'
+      })
 
-      // asyncApprovalData = async(req) => {
-      //     try {
-      //       console.log( 'calling allowOldCaptcha')
-      //       const ret = await allowOldCaptcha_asyncApprovalData(req)
-      //       console.log( 'allowOldCaptcha ret=', ret)
-      //       return ret
-      //     } catch(e) {
-      //       console.log( 'asyncApprovalData ex=', e)
-      //       //instead of aborting, send "something" as approval data
-      //       return '0x'
-      //     }
-      // }
+      // Replace the asyncApprovalData with a "relaxed" wrapper that always send something to the paymaster
+      asyncApprovalData = async (req) => {
+        try {
+          return await allowOldCaptcha_asyncApprovalData(req)
+        } catch (e) {
+          console.log('asyncApprovalData ex=', e)
+          // instead of aborting, send "something" as approval data
+          return '0x'
+        }
+      }
 
 
       var provider = new RelayProvider(web3.currentProvider, gsnConfig, {
@@ -127,7 +126,6 @@ const App = {
 
       web3.setProvider(provider)
 
-console.log( '== metacoin setProvider')
       // Bootstrap the MetaCoin abstraction for Use.
       MetaCoin.setProvider(web3.currentProvider)
 

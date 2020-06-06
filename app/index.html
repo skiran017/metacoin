@@ -22,7 +22,8 @@
   <br><label for="amount">Amount:</label><br><input type="text" id="amount" placeholder="e.g., 95" width="50%"></input>
   <p><label for="receiver">To Address:</label><br><input type="text" id="receiver" placeholder="e.g., 0x93e66d9baea28c17d9fc393b53e3fbdd76899dae" width="90%"></input>
   <div class="g-recaptcha" data-sitekey="6LdiCfoUAAAAABS4ZtDDZeG5_cJV8jkaUitW6WSP"></div>
-
+  Note: you must click the "I'm not a robot" button before you can successfuly make a call. However, you can experiment with
+   waiting for the captcha to expire, or re-clicking it to see how the CaptchaPaymaster validates the response to be valid
   <br><br><button id="send" onclick="App.transfer()">Send MetaCoin</button>
   <p>Just for test purposes, you can mint coins for your address...
   <br><button id="send" onclick="App.mint()">Mint some coins...</button>
@@ -32,7 +33,7 @@
   <span class="hint"><strong>Hint:</strong> open the browser developer console to view any errors and warnings.</span>
   <p>MetaCoin:<br><b><span id="metaaddr">here</span></b>
   <p>RelayHub:<br><b><span id="hubaddr">here</span></b>
-  <p>Paymaster:<br><b><span id="paymaster">here</span></b> <span id="paymasterBal"></span>
+  <p>CaptchaPaymaster:<br><b><span id="paymaster">here</span></b> <span id="paymasterBal"></span>
   <p>TrustedForwarder:<br><b><span id="forwarderAddress">here</span></b>
 
 </body>
