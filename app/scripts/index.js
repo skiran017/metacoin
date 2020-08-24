@@ -10,12 +10,12 @@ import contract from 'truffle-contract'
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
 import IPaymaster from '../../build/contracts/IPaymaster'
 import { networks } from './networks'
-import { calculateHashcashApproval } from '@opengsn/paymasters/src/HashCashApproval'
+import { resolveConfigurationGSN } from '@opengsn/gsn'
+import { calculateHashcashApproval } from '@opengsn/paymasters/dist/src/HashCashApproval'
 import hashashPaymasterActifact from '../../build/contracts/HashcashPaymaster'
 const HashcashPaymaster = contract(hashashPaymasterActifact)
 
-const Gsn = require('@opengsn/gsn/dist/src/relayclient/')
-const configureGSN = require('@opengsn/gsn/dist/src/relayclient/GSNConfigurator').configureGSN
+const Gsn = require('@opengsn/gsn')
 
 const RelayProvider = Gsn.RelayProvider
 
@@ -39,8 +39,6 @@ const App = {
     //hashhash needs a provider, but we only do "read", so it doesn't care
     // if its default or GSN provider
     HashcashPaymaster.setProvider(web3.currentProvider)
-
-
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
     web3.eth.net.getId(async function (err, networkId) {
@@ -51,8 +49,8 @@ const App = {
         console.log('Using local ganache')
         network = {
           relayHub: require('../../build/gsn/RelayHub.json').address,
-          stakeManager: require('../../build/gsn/StakeManager.json').address,
-          paymaster: (await HashcashPaymaster.deployed()).address
+          paymaster: (await HashcashPaymaster.deployed()).address,
+          forwarder: require('../../build/gsn/Paymaster.json').address
         }
       }
       if (!network) {
@@ -60,23 +58,22 @@ const App = {
         fatalmessage.innerHTML = "Wrong network. please switch to 'kovan' or 'ropsten'"
         return
       }
-      console.log( 'chainid=', networkId, network)
+      console.log('chainid=', networkId, network)
 
       if (err) {
         console.log('Error getting chainId', err)
         process.exit(-1)
       }
-      const gsnConfig = configureGSN({
-        relayHubAddress: network.relayHub,
-        stakeManagerAddress: network.stakeManager,
+      const gsnConfig = await resolveConfigurationGSN(window.ethereum, {
+        verbose: true,
         methodSuffix: '_v4',
         jsonStringifyRequest: true,
         chainId: networkId,
+        forwarderAddress: network.forwarder,
         paymasterAddress: network.paymaster,
         gasPriceFactorPercent: 70,
         relayLookupWindowBlocks: 1e5
       })
-
       var provider = new RelayProvider(web3.currentProvider, gsnConfig, {
         asyncApprovalData: async (req) => {
             //return last calculated
@@ -84,7 +81,6 @@ const App = {
             return hashCashApproval || '0x'
         }
       })
-
       web3.setProvider(provider)
 
       // Bootstrap the MetaCoin abstraction for Use.
@@ -160,9 +156,12 @@ const App = {
       const balanceElement = document.getElementById('balance')
       balanceElement.innerHTML = value.valueOf()
 
-      return meta.getTrustedForwarder.call({ from: account })
-    }).then(function (forwarderAddress) {
+    //   // TODO: read forwarder from contract.
+    //   return forwarder
+    //   // return meta.getTrustedForwarder.call({ from: account })
+    // }).then(function (forwarderAddress) {
 
+      const forwarderAddress = network.forwarder
       const forwarderElement = document.getElementById('forwarderAddress')
       forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
 
@@ -187,7 +186,8 @@ const App = {
         const pm = network.paymaster
         const from = (await web3.eth.getAccounts())[0]
         console.log( 'meta=', this.instance.address)
-        hashCashApproval = await calculateHashcashApproval(web3, from, this.instance.address, pm, 2000, (difficulty,nonce)=>{
+
+        hashCashApproval = await calculateHashcashApproval(web3, from, this.instance.address, network.forwarder, pm, 2000, (difficulty,nonce)=>{
           return new Promise(resolve=>{
             but.innerText = `(checked so far ${nonce} from ${2<<difficulty}`
             // if you need UI update during the process, use setImmediate to resolve:
@@ -199,7 +199,6 @@ const App = {
         but.innerText = title+': '+e
     }
   },
-
   mint : function () {
     const self = this
     MetaCoin.deployed().then(function (instance) {

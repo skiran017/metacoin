@@ -1,20 +1,20 @@
 const MetaCoin = artifacts.require('MetaCoin.sol')
-const TrustedForwarder = artifacts.require('TrustedForwarder.sol')
+const Forwarder = artifacts.require('Forwarder.sol')
 const HashcashPaymaster = artifacts.require('HashcashPaymaster.sol')
 
 module.exports = async function deployFunc (deployer, network) {
   const netid = await web3.eth.net.getId()
 
   // first, check if already deployed through truffle:
-  let forwarder = await TrustedForwarder.deployed().then(c => c.address).catch(e => null)
+  let forwarder = await Forwarder.deployed().then(c => c.address).catch(e => null)
   if (!forwarder) {
     if (netid > 100) {
-      forwarder = (await deployer.deploy(TrustedForwarder)).address
+      forwarder = (await deployer.deploy(Forwarder)).address
     } else {
       // don't automatically install on other networks. should have entires here.
       const forwarders = {
-        42: '0x6453D37248Ab2C16eBd1A8f782a2CBC65860E60B',
-        3: '0xcC87aa60a6457D9606995C4E7E9c38A2b627Da88'
+        42: '0x663946D7Ea17FEd07BF1420559F9FB73d85B5B03',
+        3: '0x766400B526fB5889AE6C52b369671F5eE137880b'
       }
       forwarder = forwarders[netid]
     }
@@ -24,12 +24,10 @@ module.exports = async function deployFunc (deployer, network) {
   }
   console.log('using forwarder: ', forwarder)
   await deployer.deploy(MetaCoin, forwarder)
-
   from = (await web3.eth.getAccounts())[0]
   await deployer.deploy(HashcashPaymaster, 15)
   const pm = await HashcashPaymaster.deployed()
   pm.setRelayHub(require('../build/gsn/RelayHub').address, {from})
   await web3.eth.sendTransaction({from,to:HashcashPaymaster.address, value:5e17})
-
   console.log('Finished 2/3 migrations files')
 }
