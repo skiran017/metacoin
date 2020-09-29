@@ -24,7 +24,6 @@ const MetaCoin = contract(metaCoinArtifact)
 // For application bootstrapping, check out window.addEventListener below.
 let accounts
 let account
-let forwarder
 
 var network
 
@@ -33,7 +32,7 @@ const App = {
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
     web3.eth.net.getId(async function (err, networkId) {
-      if (parseInt(networkId) < 1e4 ) { // We're on testnet/
+      if (parseInt(networkId) < 1000 ) { // We're on testnet/
         network = networks[networkId]
         MetaCoin.deployed = () => MetaCoin.at(network.metacoin)
       } else { // We're on ganache
@@ -41,12 +40,12 @@ const App = {
         network = {
           relayHub: require('../../build/gsn/RelayHub.json').address,
           paymaster: require('../../build/gsn/Paymaster.json').address,
-          forwarder: require('../../build/gsn/Paymaster.json').address
+          forwarder: require('../../build/gsn/Forwarder.json').address
         }
       }
       if (!network) {
         const fatalmessage = document.getElementById('fatalmessage')
-        fatalmessage.innerHTML = "Wrong network. please switch to 'kovan' or 'ropsten'"
+        fatalmessage.innerHTML = "Wrong network. please switch to 'kovan' or 'ropsten' or 'rinkeby'"
         return
       }
       console.log('chainid=', networkId, network)
@@ -56,15 +55,14 @@ const App = {
         process.exit(-1)
       }
       const gsnConfig = await resolveConfigurationGSN(window.ethereum, {
-        verbose: true,
-        methodSuffix: '_v4',
-        jsonStringifyRequest: true,
+        verbose: window.location.href.includes('verbose'),
         chainId: networkId,
         forwarderAddress: network.forwarder,
         paymasterAddress: network.paymaster,
         gasPriceFactorPercent: 70,
         relayLookupWindowBlocks: 1e5
       })
+      console.log('===config=', gsnConfig)
       var provider = new RelayProvider(web3.currentProvider, gsnConfig)
       web3.setProvider(provider)
 
@@ -131,7 +129,6 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      console.log('Metacoin deployed', instance)
       const address = document.getElementById('address')
       address.innerHTML = self.addressLink(account)
       putAddr( 'metaaddr', MetaCoin.address)
@@ -154,7 +151,7 @@ const App = {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
       if ( /mismatch/.test(e)) {
-        fatalmessage.innerHTML = "Wrong network. please switch to 'kovan'"
+        fatalmessage.innerHTML = "Wrong network. please switch to 'kovan', 'rinekby', or 'ropsten' "
       }
       self.setStatus('Error getting balance; see log.')
     })
@@ -163,7 +160,6 @@ const App = {
   mint : function () {
     const self = this
     MetaCoin.deployed().then(function (instance) {
-      console.log('Metacoin deployed', instance)
       self.setStatus('Mint: Initiating transaction... (please wait)')
       return instance.mint({ from: account })
     }).then(function (res) {
@@ -186,7 +182,6 @@ const App = {
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      console.log('Metacoin deployed', instance)
       return meta.transfer(receiver, amount,
         { from: account })
     }).then(function (res) {

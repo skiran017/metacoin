@@ -22,11 +22,18 @@ module.exports = {
       },
       network_id: 42
     },
+    rinkeby: {
+      provider: function () {
+        return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/c3422181d0594697a38defe7706a1e5b')
+      },
+      network_id: 4
+    },
     ropsten: {
       provider: function () {
         return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/v3/c3422181d0594697a38defe7706a1e5b')
       },
-      network_id: 3
+      network_id: 3,
+      gasLimit: 2.8e6
     },
     kotti: {
       provider: function () {
@@ -45,7 +52,7 @@ module.exports = {
   },
   compilers: {
     solc: {
-      version: '0.6.9'
+      version: '0.6.10'
     }
   }
 }

@@ -1,0 +1,3 @@
+#unique number for chain/net (compatible with both mac and linux)
+net=`date "+%j%H%M%S"`
+npx --no-install run-with-testrpc --networkId $net --chainId $net "$@" 'gsn start'
