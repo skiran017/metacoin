@@ -278,10 +278,10 @@
     "@types/web3" "^1.2.2"
     web3 "1.2.6"
 
-"@opengsn/gsn@2.0.0-beta.3":
-  version "2.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@opengsn/gsn/-/gsn-2.0.0-beta.3.tgz#1a768ee62d4bd907fd23b1d346d49c3b4f0252de"
-  integrity sha512-mUE/Y+IdsSWcpyH/6i45+/QT3XGm67//L3tDBdAeTmkfwwa4mvAgPrCna0lV6Gw6EI3V75rg+eb3JW9rzeg1+Q==
+"@opengsn/gsn@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@opengsn/gsn/-/gsn-2.0.1.tgz#bf77894257d8d0015948215a3ba4759d085873e1"
+  integrity sha512-AHEU2SOYTxXiTlLtFGpF0p3S6mflPb1ajh4zvQPv890RNsXMqc9U3VsZ5q6HZXpooE7HOkEUHrQtqgT0rJdXGA==
   dependencies:
     "@openeth/truffle-typings" "0.0.6"
     "@openzeppelin/contracts" "^3.2.0"
