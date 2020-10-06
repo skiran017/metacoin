@@ -69,4 +69,3 @@ Object.keys(modified).forEach(fname => {
   // fs.renameSync(fname, fname + '.old')
   // fs.renameSync(fname + '.name', fname)
 })
-

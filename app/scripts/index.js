@@ -32,7 +32,7 @@ const App = {
     const self = this
     // This should actually be web3.eth.getChainId but MM compares networkId to chainId apparently
     web3.eth.net.getId(async function (err, networkId) {
-      if (parseInt(networkId) < 1000 ) { // We're on testnet/
+      if (parseInt(networkId) < 1000) { // We're on testnet/
         network = networks[networkId]
         MetaCoin.deployed = () => MetaCoin.at(network.metacoin)
       } else { // We're on ganache
@@ -109,55 +109,53 @@ const App = {
   refreshBalance: function () {
     const self = this
 
-    function putItem(name,val) {
+    function putItem (name, val) {
       const item = document.getElementById(name)
       item.innerHTML = val
     }
-    function putAddr(name,addr) {
+    function putAddr (name, addr) {
       putItem(name, self.addressLink(addr))
     }
 
-    putAddr( 'paymaster', network.paymaster )
-    putAddr( 'hubaddr', network.relayHub )
+    putAddr('paymaster', network.paymaster)
+    putAddr('hubaddr', network.relayHub)
 
-    new web3.eth.Contract( IPaymaster.abi, network.paymaster ).methods
-      .getRelayHubDeposit().call().then(bal=> {
-      putItem( 'paymasterBal', "- eth balance: "+(bal/1e18) )
-    }).catch(console.log)
-
+    new web3.eth.Contract(IPaymaster.abi, network.paymaster).methods
+      .getRelayHubDeposit().call().then(bal => {
+        putItem('paymasterBal', '- eth balance: ' + (bal / 1e18))
+      }).catch(console.log)
 
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
       const address = document.getElementById('address')
       address.innerHTML = self.addressLink(account)
-      putAddr( 'metaaddr', MetaCoin.address)
+      putAddr('metaaddr', MetaCoin.address)
 
       return meta.balanceOf.call(account, { from: account })
     }).then(function (value) {
       const balanceElement = document.getElementById('balance')
       balanceElement.innerHTML = value.valueOf()
 
-    //   // TODO: read forwarder from contract.
-    //   return forwarder
-    //   // return meta.getTrustedForwarder.call({ from: account })
-    // }).then(function (forwarderAddress) {
+      //   // TODO: read forwarder from contract.
+      //   return forwarder
+      //   // return meta.getTrustedForwarder.call({ from: account })
+      // }).then(function (forwarderAddress) {
 
       const forwarderAddress = network.forwarder
       const forwarderElement = document.getElementById('forwarderAddress')
       forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
-
     }).catch(function (e) {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
-      if ( /mismatch/.test(e)) {
+      if (/mismatch/.test(e)) {
         fatalmessage.innerHTML = "Wrong network. please switch to 'kovan', 'rinekby', or 'ropsten' "
       }
       self.setStatus('Error getting balance; see log.')
     })
   },
 
-  mint : function () {
+  mint: function () {
     const self = this
     MetaCoin.deployed().then(function (instance) {
       self.setStatus('Mint: Initiating transaction... (please wait)')

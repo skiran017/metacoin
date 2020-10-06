@@ -2,13 +2,14 @@
 require('babel-register')
 var HDWalletProvider = require('truffle-hdwallet-provider')
 var mnemonic = 'give cancel discover junk point despair woman piece cart typical void bench hub tenant winter'
-function readFile(name) {
-
+/*
+function readFile (name) {
   const fs = require('fs')
   // if (fs.existsSync(secretMnemonicFile)) {
-    return fs.readFileSync('.secret-mnemonic.txt', { encoding: 'utf8' })
+  return fs.readFileSync('.secret-mnemonic.txt', { encoding: 'utf8' })
   // }
 }
+*/
 module.exports = {
   networks: {
     development: {

@@ -1,4 +1,4 @@
-/* global web3 */
+/* global */
 const MetaCoin = artifacts.require('MetaCoin.sol')
 const Forwarder = artifacts.require('Forwarder.sol')
 
@@ -9,6 +9,6 @@ module.exports = async function deployFunc (deployer, network) {
     throw new Error('no valid forwarder for network ' + network)
   }
   console.log('using forwarder: ', forwarder)
-  await deployer.deploy(MetaCoin, forwarder, {gas: 2.6e6 })
+  await deployer.deploy(MetaCoin, forwarder, { gas: 2.6e6 })
   console.log('Finished 2/3 migrations files')
 }

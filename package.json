@@ -6,9 +6,10 @@
     "test": "truffle test",
     "migrate": "truffle migrate",
     "lint": "eslint ./",
+    "lint:fix": "eslint . --fix",
     "old-prepare": "truffle compile && npm test && npm run lint && webpack-cli --config ./webpack.config.js",
     "pack": "webpack-cli --mode production --config ./webpack.config.js",
-    "build": "truffle compile && yarn update-deployed && yarn run pack",
+    "build": "truffle compile && yarn update-deployed && find app build -ls && yarn run pack",
     "update-deployed": "./scripts/update-deployed.js --deployed deployed.json",
     "dev": "webpack-dev-server",
     "gsn-with-ganache": "./scripts/gsn-with-ganache"
