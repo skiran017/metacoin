@@ -10,7 +10,6 @@ import contract from 'truffle-contract'
 import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
 import IPaymaster from '../../build/contracts/IPaymaster.json'
 import { networks } from './networks'
-import { resolveConfigurationGSN } from '@opengsn/gsn'
 
 const Gsn = require('@opengsn/gsn')
 
@@ -54,16 +53,16 @@ const App = {
         console.log('Error getting chainId', err)
         process.exit(-1)
       }
-      const gsnConfig = await resolveConfigurationGSN(window.ethereum, {
+      const gsnConfig = {
         verbose: window.location.href.includes('verbose'),
         chainId: networkId,
         forwarderAddress: network.forwarder,
         paymasterAddress: network.paymaster,
         gasPriceFactorPercent: 70,
         relayLookupWindowBlocks: 1e5
-      })
-      console.log('===config=', gsnConfig)
+      }
       var provider = new RelayProvider(web3.currentProvider, gsnConfig)
+      await provider.init()
       web3.setProvider(provider)
 
       // Bootstrap the MetaCoin abstraction for Use.
