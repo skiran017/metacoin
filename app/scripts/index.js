@@ -54,14 +54,12 @@ const App = {
         process.exit(-1)
       }
       const gsnConfig = {
-        verbose: window.location.href.includes('verbose'),
-        chainId: networkId,
-        forwarderAddress: network.forwarder,
-        paymasterAddress: network.paymaster,
-        gasPriceFactorPercent: 70,
-        relayLookupWindowBlocks: 1e5
+        loggerConfigration: {
+          logLevel: window.location.href.includes('verbose') ? 'debug' : 'error'
+        },
+        paymasterAddress: network.paymaster
       }
-      var provider = new RelayProvider(web3.currentProvider, gsnConfig)
+      var provider = RelayProvider.newProvider({ provider: web3.currentProvider, config: gsnConfig })
       await provider.init()
       web3.setProvider(provider)
 

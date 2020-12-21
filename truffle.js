@@ -48,7 +48,7 @@ module.exports = {
         const wallet = new HDWalletProvider(mnemonic, 'https://www.ethercluster.com/etc')
         return wallet
       },
-      network_id: 1
+      network_id: 61
     }
   },
   compilers: {
