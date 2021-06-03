@@ -16,6 +16,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@opengsn/dev": "2.2.2",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
     "babel-eslint": "^8.2.3",
@@ -54,7 +55,8 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
-    "@opengsn/gsn": "^2.1.0",
+    "@opengsn/contracts": "2.2.2",
+    "@opengsn/provider": "2.2.2",
     "truffle-hdwallet-provider": "^1.0.17"
   }
 }

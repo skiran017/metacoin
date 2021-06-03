@@ -15,18 +15,21 @@ module.exports = {
     development: {
       host: '127.0.0.1',
       port: 8545,
+      skipDryRun: true,
       network_id: '*' // Match any network id
     },
     kovan: {
       provider: function () {
         return new HDWalletProvider(mnemonic, 'https://kovan.infura.io/v3/c3422181d0594697a38defe7706a1e5b')
       },
+      skipDryRun: true,
       network_id: 42
     },
     rinkeby: {
       provider: function () {
         return new HDWalletProvider(mnemonic, 'https://rinkeby.infura.io/v3/c3422181d0594697a38defe7706a1e5b')
       },
+      skipDryRun: true,
       network_id: 4
     },
     ropsten: {
@@ -34,6 +37,7 @@ module.exports = {
         return new HDWalletProvider(mnemonic, 'https://ropsten.infura.io/v3/c3422181d0594697a38defe7706a1e5b')
       },
       network_id: 3,
+      skipDryRun: true,
       gasLimit: 2.8e6
     },
     kotti: {
@@ -41,6 +45,7 @@ module.exports = {
         const wallet = new HDWalletProvider(mnemonic, 'https://www.ethercluster.com/kotti')
         return wallet
       },
+      skipDryRun: true,
       network_id: 6
     },
     ethereum_classic_mainnet: {
@@ -48,12 +53,13 @@ module.exports = {
         const wallet = new HDWalletProvider(mnemonic, 'https://www.ethercluster.com/etc')
         return wallet
       },
+      skipDryRun: true,
       network_id: 61
     }
   },
   compilers: {
     solc: {
-      version: '0.6.10'
+      version: '0.7.6'
     }
   }
 }

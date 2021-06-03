@@ -11,7 +11,7 @@ import metaCoinArtifact from '../../build/contracts/MetaCoin.json'
 import IPaymaster from '../../build/contracts/IPaymaster.json'
 import { networks } from './networks'
 
-const Gsn = require('@opengsn/gsn')
+const Gsn = require('@opengsn/provider')
 
 const RelayProvider = Gsn.RelayProvider
 
@@ -54,6 +54,7 @@ const App = {
         process.exit(-1)
       }
       const gsnConfig = {
+        relayLookupWindowBlocks: 600000,
         loggerConfigration: {
           logLevel: window.location.href.includes('verbose') ? 'debug' : 'error'
         },
@@ -115,18 +116,26 @@ const App = {
     }
 
     putAddr('paymaster', network.paymaster)
-    putAddr('hubaddr', network.relayHub)
+
+    new web3.eth.Contract(IPaymaster.abi, network.paymaster).methods
+      .getHubAddr().call().then(hub => {
+        putAddr('hubaddr', hub)
+      }).catch(console.log)
 
     new web3.eth.Contract(IPaymaster.abi, network.paymaster).methods
       .getRelayHubDeposit().call().then(bal => {
         putItem('paymasterBal', '- eth balance: ' + (bal / 1e18))
       }).catch(console.log)
 
+    new web3.eth.Contract(IPaymaster.abi, network.paymaster).methods
+      .trustedForwarder().call().then(forwarder => {
+        putAddr('forwarderAddress', forwarder)
+      }).catch(console.log)
+
     let meta
     MetaCoin.deployed().then(function (instance) {
       meta = instance
-      const address = document.getElementById('address')
-      address.innerHTML = self.addressLink(account)
+      putAddr('address', account)
       putAddr('metaaddr', MetaCoin.address)
 
       return meta.balanceOf.call(account, { from: account })
@@ -134,14 +143,6 @@ const App = {
       const balanceElement = document.getElementById('balance')
       balanceElement.innerHTML = value.valueOf()
 
-      //   // TODO: read forwarder from contract.
-      //   return forwarder
-      //   // return meta.getTrustedForwarder.call({ from: account })
-      // }).then(function (forwarderAddress) {
-
-      const forwarderAddress = network.forwarder
-      const forwarderElement = document.getElementById('forwarderAddress')
-      forwarderElement.innerHTML = self.addressLink(forwarderAddress, forwarderAddress)
     }).catch(function (e) {
       const fatalmessage = document.getElementById('fatalmessage')
       console.log(e)
@@ -206,6 +207,16 @@ window.addEventListener('load', async () => {
     try {
       // Request account access if needed
       await ethereum.enable()
+
+      ethereum.on('chainChanged', (chainId)=>{
+        console.log( 'chainChanged', chainId)
+        window.location.reload()
+      })
+      ethereum.on('accountsChanged', (accs)=>{
+        console.log( 'accountChanged', accs)
+        window.location.reload()
+      })
+
     } catch (error) {
       // User denied account access...
       alert('NO NO NO')
