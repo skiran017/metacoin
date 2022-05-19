@@ -118,7 +118,7 @@ const App = {
     putAddr('paymaster', network.paymaster)
 
     new web3.eth.Contract(IPaymaster.abi, network.paymaster).methods
-      .getHubAddr().call().then(hub => {
+      .getRelayHub().call().then(hub => {
         putAddr('hubaddr', hub)
       }).catch(console.log)
 
@@ -128,7 +128,7 @@ const App = {
       }).catch(console.log)
 
     new web3.eth.Contract(IPaymaster.abi, network.paymaster).methods
-      .trustedForwarder().call().then(forwarder => {
+      .getTrustedForwarder().call().then(forwarder => {
         putAddr('forwarderAddress', forwarder)
       }).catch(console.log)
 
